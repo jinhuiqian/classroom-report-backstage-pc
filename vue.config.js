@@ -6,7 +6,7 @@ module.exports = {
     open: true,
     hotOnly: true
   },
-  lintOnSave:false,
+  lintOnSave: false,
   outputDir: './dist',
   assetsDir: './assets/',
   publicPath: './',
