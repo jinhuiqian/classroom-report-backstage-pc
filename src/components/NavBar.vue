@@ -1,9 +1,9 @@
-<template>
-  <v-app id="inspire">
-    <v-app-bar
+ <template>
+ <v-app-bar
       app
       color="white"
       flat
+      container
     >
       <v-container class="py-0 fill-height">
         <v-avatar
@@ -11,15 +11,7 @@
           color="grey darken-1"
           size="32"
         ></v-avatar>
-
-        <v-btn
-          v-for="link in links"
-          :key="link"
-          text
-        >
-          {{ link }}
-        </v-btn>
-
+        
         <v-spacer></v-spacer>
 
         <v-responsive max-width="260">
@@ -33,5 +25,10 @@
         </v-responsive>
       </v-container>
     </v-app-bar>
-  </v-app>
-</template>
+ </template>
+
+ <style scoped>
+ .container{
+   position: relative;
+ }
+ </style>
