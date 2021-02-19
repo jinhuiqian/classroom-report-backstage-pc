@@ -1,16 +1,21 @@
 <template>
-  <div>
+<div class="bg">
+
+  <div class="a">
     <el-table v-loading="loading" :data="playlist" stripe>
       <el-table-column type="index" width="50" label="编号"></el-table-column>
       <el-table-column label="教室"></el-table-column>
       <el-table-column label="卫生情况"></el-table-column>
-      <el-table-column label="是否异常"></el-table-column>
-      <el-table-column label="时间"></el-table-column>
+      <el-table-column label="其他情况"></el-table-column>
+      <el-table-column label="提交时间"></el-table-column>
       <el-table-column label="评分">
+
+      </el-table-column>
+      <el-table-column label="操作">
         <template slot-scope="scope">
-          <el-button size="mini">编辑</el-button>
-          <el-button size="mini">删除</el-button>
-        </template>
+        <el-button size="mini" type="text" @click="showDetail(scope.row)"
+        >查看详情</el-button>
+      </template>
       </el-table-column>
     </el-table>
 
@@ -23,15 +28,47 @@
       </span>
     </el-dialog>
 
+    <el-row justify="center" type="flex">
+      <el-col :span="10">
     <el-pagination
       @size-change="handleSizeChange"
       @current-change="handleCurrentChange"
       :current-page.sync="currentPage2"
-      :page-sizes="[100, 200, 300, 400]"
-      :page-size="100"
+      :page-sizes="[10, 20, 50, 100]"
+      :page-size="20"
       layout="sizes, prev, pager, next"
-      :total="1000">
+      :total="1000"
+      class="b"
+      >
     </el-pagination>
+    </el-col>
+    </el-row>
 
   </div>
+</div>
 </template>
+
+<script>
+
+export default {
+
+}
+</script>
+
+<style scoped>
+.bg{
+      background-color: #d3dce6;
+      background-size: cover;
+      position: absolute;
+      width: 100%;
+      height: 100%;
+}
+.a{
+  padding-left: 60px;
+  padding-right: 60px;
+  padding-top: 30px;
+}
+.b{
+  padding-top: 15px;
+}
+</style>

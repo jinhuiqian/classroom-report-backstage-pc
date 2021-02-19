@@ -6,12 +6,23 @@ import Layout from "@/layout";
 export const constantRoutes = [
   {
     path: "/",
-    redirect: "/allreports/allreports"
+    redirect: "/home"
   },
   {
     path: "/login",
     component: () => import("@/views/login/index"),
     hidden: true
+  },
+  {
+    path: "/home",
+    component: Layout,
+    children: [
+      {
+        path: "",
+        component: () => import("@/views/home/home"),
+        meta: { title: "首页", icon: "dashboard" }
+      }
+    ]
   },
   {
     path: "/allreports",
@@ -39,17 +50,6 @@ export const constantRoutes = [
     ]
   },
   {
-    path: "/viewdata",
-    component: Layout,
-    children: [
-      {
-        path: "viewdata",
-        component: () => import("@/views/viewdata/viewdata"),
-        meta: { title: "查看数据", icon: "tree" }
-      }
-    ]
-  },
-  {
     path: "/authoritymanagement",
     component: Layout,
     children: [
@@ -58,7 +58,7 @@ export const constantRoutes = [
         component: () => import("@/views/authoritymanagement/authoritymanagement"),
         meta: {
           title: "权限管理",
-          icon: "example"
+          icon: "user"
         }
       }
     ]
