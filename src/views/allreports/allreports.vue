@@ -6,13 +6,16 @@
       <el-table-column type="index" width="50" label="编号"></el-table-column>
       <el-table-column label="教室"></el-table-column>
       <el-table-column label="卫生情况"></el-table-column>
-      <el-table-column label="是否异常"></el-table-column>
-      <el-table-column label="时间"></el-table-column>
+      <el-table-column label="其他情况"></el-table-column>
+      <el-table-column label="提交时间"></el-table-column>
       <el-table-column label="评分">
+
+      </el-table-column>
+      <el-table-column label="操作">
         <template slot-scope="scope">
-          <el-button size="mini">编辑</el-button>
-          <el-button size="mini">删除</el-button>
-        </template>
+        <el-button size="mini" type="text" @click="showDetail(scope.row)"
+        >查看详情</el-button>
+      </template>
       </el-table-column>
     </el-table>
 

@@ -6,8 +6,8 @@
       <el-table-column type="index" width="50" label="编号"></el-table-column>
       <el-table-column label="教室" prop="classroom"></el-table-column>
       <el-table-column label="卫生情况" prop="weisheng"></el-table-column>
-      <el-table-column label="是否异常" prop="yichang"></el-table-column>
-      <el-table-column label="时间">
+      <el-table-column label="其他情况" prop="yichang"></el-table-column>
+      <el-table-column label="提交时间">
         <template slot-scope="scope">
           <span>
             {{scope.row.updateTime | parseTime("{y}-{m}-{d} {h}:{i}")}}
