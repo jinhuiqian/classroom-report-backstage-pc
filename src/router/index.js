@@ -4,7 +4,10 @@ Vue.use(Router);
 import Layout from "@/layout";
 
 export const constantRoutes = [
-  { path: "/", redirect: "/allreports/allreports" },
+  {
+    path: "/",
+    redirect: "/allreports/allreports"
+  },
   {
     path: "/login",
     component: () => import("@/views/login/index"),
