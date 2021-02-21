@@ -11,6 +11,7 @@ export function login(data) {
 
 // 手机号登录
 export function loginByPhone(params) {
+  console.log("登录")
   return request({
     url: `${baseURL}/user/loginByPhone`,
     data: {
@@ -61,7 +62,7 @@ export function fetchList(params) {
 
 export function getInfo(token) {
   return request({
-    url: '/vue-admin-template/user/info',
+    url: `${baseURL}/user/getInfo`,
     method: 'get',
     params: { token }
   })

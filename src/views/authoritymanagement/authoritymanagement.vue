@@ -63,7 +63,7 @@
         </template>
       </el-table-column>
       <el-table-column label="操作" v-if="isSuperAdmin">
-        <template slot-scope="scope">
+        <template slot-scope="scope" v-if="scope.row.authority == 0">
           <el-button size="mini">编辑</el-button>
           <el-button size="mini" type="danger" @click="onDel(scope.row)"
             >删除</el-button
