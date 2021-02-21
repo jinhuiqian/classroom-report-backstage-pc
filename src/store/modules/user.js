@@ -14,7 +14,7 @@ const getDefaultState = () => {
     avatar:'https://flobby.oss-cn-shenzhen.aliyuncs.com/avatar/4a3935d6-9579-467f-b63d-4a956414306f.jpg',
   }
 }
-
+ 
 const state = getDefaultState()
 
 const mutations = {
