@@ -1,4 +1,5 @@
 import request from '@/utils/request'
+// const baseURL = 'https://flobby-3gkbs7rb8f7e282e-1305016829.ap-shanghai.service.tcloudbase.com/api'
 const baseURL = 'http://localhost:3000'
 
 export function login(data) {
@@ -60,11 +61,32 @@ export function fetchList(params) {
   })
 }
 
+// 设为超管
+export function setSuperAdmin(params){
+  return request({
+    url: `${baseURL}/user/updateAuth`,
+    method: 'post',
+    data: {
+      ...params
+    }
+  })
+}
+
 export function getInfo(token) {
   return request({
     url: `${baseURL}/user/getInfo`,
     method: 'get',
-    params: { token }
+    params: {token}
+  })
+}
+
+export function updateInfo(params) {
+  return request({
+    url: `${baseURL}/user/updateInfo`,
+    data: {
+      ...params
+    },
+    method: 'post'
   })
 }
 

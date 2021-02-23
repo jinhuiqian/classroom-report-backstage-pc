@@ -61,7 +61,6 @@
 </template>
 
 <script>
-import { loginByPhone, loginByJN } from "@/api/user";
 export default {
   name: "Login",
   data() {
@@ -134,28 +133,15 @@ export default {
     },
     jobNumLogin() {
       console.log("工号");
-      let jobNumBody = {
-        job_number: this.loginForm.account,
-        password: this.loginForm.password,
-      };
-      loginByJN(jobNumBody).then((res) => {
-        console.log(res);
-        if (res.data.username != null) {
-          this.$router.push({ path: this.redirect || "/" });
-          this.$message({
-            message: "登录成功",
-            type: "success",
-          });
-        } else {
-          this.$message.error(res.data);
-        }
+      this.$store.dispatch("user/loginByJN", this.loginForm).then((res) => {
+        this.$router.push({ path: this.redirect || "/" });
       });
     },
     phoneLogin() {
       console.log("手机号");
-      this.$store.dispatch('user/loginByPhone', this.loginForm).then((res) => {
-        this.$router.push({path:this.redirect || '/'})
-      })
+      this.$store.dispatch("user/loginByPhone", this.loginForm).then((res) => {
+        this.$router.push({ path: this.redirect || "/" });
+      });
     },
   },
 };

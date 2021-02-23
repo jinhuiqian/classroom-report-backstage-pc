@@ -1,5 +1,22 @@
 <template>
   <div class="bg" style="padding: 10px 60px">
+    <el-button plain @click="onUpdate">修改账号信息</el-button>
+
+    <!-- 修改信息的对话框 -->
+    <el-dialog title="修改信息" :visible.sync="updateInfoFlag" width="30%">
+      <el-input
+        v-model="updateBody.phone"
+        placeholder="请输入新手机号"
+        style="margin-bottom: 10px"
+      />
+      <el-input v-model="updateBody.password" placeholder="请输入新密码" />
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="updateInfoFlag = false">取 消</el-button>
+        <el-button type="primary" @click="updateInfo">确 定</el-button>
+      </span>
+    </el-dialog>
+
+    <!-- 添加管理员 -->
     <div v-if="isSuperAdmin">
       <h2>添加管理员</h2>
       <el-row :gutter="20">
@@ -64,7 +81,9 @@
       </el-table-column>
       <el-table-column label="操作" v-if="isSuperAdmin">
         <template slot-scope="scope" v-if="scope.row.authority == 0">
-          <el-button size="mini">编辑</el-button>
+          <el-button size="mini" @click="onUpdateAuth(scope.row)"
+            >设为超管</el-button
+          >
           <el-button size="mini" type="danger" @click="onDel(scope.row)"
             >删除</el-button
           >
@@ -80,7 +99,16 @@
         <el-button type="primary" @click="doDel">确 定</el-button>
       </span>
     </el-dialog>
+    <!-- 修改权限的对话框 -->
+    <el-dialog title="提示" :visible.sync="updateAuthFlag" width="30%">
+      <span>确定设为超级管理员吗</span>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="updateAuthFlag = false">取 消</el-button>
+        <el-button type="primary" @click="doUpdateAuth">确 定</el-button>
+      </span>
+    </el-dialog>
 
+    <!-- 加载更多管理员 -->
     <div class="loadMore">
       <el-button class="more" plain @click="loadMore">加载更多</el-button>
     </div>
@@ -88,8 +116,15 @@
 </template>
 
 <script>
-import { fetchList, deleteAdmin, addAdmin } from "@/api/user";
+import {
+  fetchList,
+  deleteAdmin,
+  addAdmin,
+  updateInfo,
+  setSuperAdmin,
+} from "@/api/user";
 import scroll from "@/utils/scroll";
+import { mapGetters } from "vuex";
 export default {
   data() {
     return {
@@ -100,19 +135,86 @@ export default {
       repassword: "",
       loading: false,
       adminList: [],
-      count: 5,
-      isSuperAdmin: true,
+      count: 1,
       delDialogVisible: false,
       info: {},
+      updateInfoFlag: false,
+      updateAuthFlag: false,
+      updateBody: {
+        phone: "",
+        password: "",
+      },
     };
   },
-  // mounted() {
-  //   scroll.start(this.getList)
-  // },
+  mounted() {
+    scroll.start(this.getList);
+  },
   created() {
     this.getList();
   },
+  computed: {
+    ...mapGetters(["isSuperAdmin", "admin"]),
+  },
   methods: {
+    // 修改权限相关
+    onUpdateAuth(row) {
+      this.updateAuthFlag = true;
+      this.info.job_number = row.job_number;
+      console.log(this.info);
+    },
+    doUpdateAuth() {
+      setSuperAdmin({
+        job_number: this.info.job_number,
+        authority: 1,
+      }).then((res) => {
+        this.updateAuthFlag = false;
+        console.log(res);
+        if (res.data.modified > 0) {
+          this.adminList = [];
+          this.getList();
+          this.$message({
+            message: "已设为超级管理员",
+            type: "success",
+          });
+        } else {
+          this.$message.error("修改失败");
+        }
+      });
+    },
+    // 修改个人信息相关
+    onUpdate() {
+      this.updateBody = {
+        phone: "",
+        password: "",
+      };
+      this.updateInfoFlag = true;
+    },
+    updateInfo() {
+      if (
+        (this.updateBody.password.length == 0 ||
+          this.updateBody.password.length >= 6) &&
+        (this.updateBody.phone.length == 0 ||
+          this.updateBody.phone.length == 11)
+      ) {
+        updateInfo({
+          id: this.admin._id,
+          phone: this.updateBody.phone,
+          password: this.updateBody.password,
+        }).then((res) => {
+          if (res.data.modified > 0) {
+            this.$message({
+              message: "修改成功",
+              type: "success",
+            });
+          } else {
+            this.$message.error("修改失败");
+          }
+        });
+      } else {
+        this.$message.error("新手机号长度必须为11位，新密码长度请大于6位");
+      }
+    },
+    // 获取管理员列表
     getList() {
       this.loading = true;
       fetchList({
@@ -122,11 +224,12 @@ export default {
         this.loading = false;
         console.log(res);
         this.adminList = this.adminList.concat(res.data);
-        // if (res.data.length < this.count) {
-        //   scroll.end();
-        // }
+        if (res.data.length < this.count) {
+          scroll.end();
+        }
       });
     },
+    // 删除管理员相关
     doDel() {
       deleteAdmin({ id: this.info.id }).then((res) => {
         console.log(res.data);
@@ -148,9 +251,11 @@ export default {
       this.info.id = row._id;
       console.log(this.info);
     },
+    // 加载管理员
     loadMore() {
       this.getList();
     },
+    // 验证添加管理员信息
     vaildInfo() {
       if (
         this.username != "" &&
@@ -162,6 +267,7 @@ export default {
         return true;
       }
     },
+    // 添加管理员
     submitAdd() {
       console.log(this.vaildInfo());
       if (this.vaildInfo()) {

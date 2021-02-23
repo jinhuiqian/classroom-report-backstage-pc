@@ -1,4 +1,4 @@
-import { login, logout, getInfo, loginByPhone } from '@/api/user'
+import { login, logout, getInfo, loginByPhone, loginByJN } from '@/api/user'
 import { getToken, setToken, removeToken } from '@/utils/auth'
 import { resetRouter } from '@/router'
 
@@ -6,15 +6,13 @@ const getDefaultState = () => {
   return {
     token: getToken,
     isSuperAdmin: '',
-    admin: {
       job_number: '',
       phone: '',
       username: '',
-    },
     avatar:'https://flobby.oss-cn-shenzhen.aliyuncs.com/avatar/4a3935d6-9579-467f-b63d-4a956414306f.jpg',
   }
 }
- 
+
 const state = getDefaultState()
 
 const mutations = {
@@ -34,7 +32,7 @@ const mutations = {
   },
   SET_Admin: (state, admin) => {
     state.admin = admin
-  }
+  },
 }
 
 const actions = {
@@ -43,6 +41,20 @@ const actions = {
     const { account, password } = userInfo
     return new Promise((resolve, reject) => {
       loginByPhone({ phone: account.trim(), password: password }).then(response => {
+        console.log(response)
+        commit('SET_TOKEN', response.token)
+        setToken(response.token)
+        resolve()
+      }).catch(error => {
+        reject(error)
+      })
+    })
+  },
+
+  loginByJN({commit}, userInfo){
+    const { account, password } = userInfo
+    return new Promise((resolve, reject) => {
+      loginByJN({ job_number: account.trim(), password: password }).then(response => {
         console.log(response)
         commit('SET_TOKEN', response.token)
         setToken(response.token)
@@ -73,13 +85,14 @@ const actions = {
   getInfo({ commit, state }) {
     return new Promise((resolve, reject) => {
       getInfo(state.token).then(response => {
-        console.log(response)
         const { data } = response
+        console.log(response)
         if (!data) {
           return reject('Verification failed, please Login again.')
         }
         commit('SET_IsSuperAdmin', data.authority)
         const admin = {
+          _id: data._id,
           job_number: data.job_number,
           phone: data.phone,
           username: data.username,
