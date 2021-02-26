@@ -7,13 +7,21 @@
       <el-table-column label="教室" prop="classroom"></el-table-column>
       <el-table-column label="卫生情况" prop="weisheng"></el-table-column>
       <el-table-column label="其他情况" prop="yichang"></el-table-column>
+
       <el-table-column label="提交时间">
-        <template slot-scope="scope">
-          <span>
-            {{scope.row.updateTime | parseTime("{y}-{m}-{d} {h}:{i}")}}
-          </span>
-        </template>
+
       </el-table-column>
+      <el-table-column label="评分" prop="pf">
+       <template slot-scope="scope" >
+        <el-rate
+            disabled
+            text-color="#ff9900"
+            v-model="scope.row.pf"
+            >
+        </el-rate>
+       </template>
+      </el-table-column>
+      <el-table-column label="状态" prop="zt"></el-table-column>
       <el-table-column label="操作">
         <template slot-scope="scope">
         <el-button size="mini" type="text" @click="showDetail(scope.row)"
@@ -40,23 +48,78 @@
 
   </div>
 
-  <!-- 博客详情对话框 -->
+  <!-- 详情对话框 -->
     <el-dialog
-    :title="reportDetail.content"
+    :title="title"
     :visible.sync="detailReportVisible"
-    width="70%"
+    width="60%"
     >
+    <el-row :gutter="10">
+      <el-col :span="5">
+        教室：{{report.classroom}}
+      </el-col>
+      <el-col :span="5">
+        提交时间： {{report.time | parseTime("{y}-{m}-{d} {h}:{i}")}}
+      </el-col>
+    </el-row>
 
-    <span slot="footer" class="dialog-footer">
+    <el-row :gutter="15">
+      <el-col :span="5">
+        桌椅是否有异常：{{reportDetail.yz}}
+      </el-col>
+      <el-col :span="5">
+        空调是否有异常: {{reportDetail.kt}}
+      </el-col>
+      <el-col :span="5">
+        窗户是否有异常: {{reportDetail.ch}}
+      </el-col>
+    </el-row>
+
+    <el-row :gutter="15">
+      <el-col :span="5">
+        投影仪是否有异常：{{reportDetail.tyy}}
+      </el-col>
+      <el-col :span="5">
+        门禁是否有异常: {{reportDetail.mj}}
+      </el-col>
+      <el-col :span="5">
+        实训设备是否有异常: {{reportDetail.sxsb}}
+      </el-col>
+    </el-row>
+
+    <h4>详细描述</h4>
+    <el-row :gutter="20">
+      {{reportDetail.des}}
+    </el-row>
+
+    <h4>图片</h4>
+    <el-row :gutter="20">
+      <el-col :span="10" v-for="(item,index) in reportDetail.imgs" :key="index" class="col">
+        <img :src="item" width="100" height="100"/>
+      </el-col>
+      <el-col :span="5">
+        <div class="block">
+            <span class="demonstration">卫生评分</span>
+              <el-rate
+                v-model="value"
+                :colors="colors"
+                >
+              </el-rate>
+        </div>
+      </el-col>
+      <el-col span="5">
+      <el-button @click="editRating">修改评分</el-button>
+      <el-button @click="onSubmit">处理</el-button>
       <el-button @click="detailReportVisible = false">关闭</el-button>
-    </span>
+      </el-col>
+    </el-row>
     </el-dialog>
 
 </div>
 </template>
 
 <script>
-import { fetchList } from "@/api/report"
+import { fetchAList,fetchDetail,updateStatus,updateScore } from "@/api/report"
 import scroll from "@/utils/scroll"
 
 export default {
@@ -66,7 +129,11 @@ export default {
       count: 50,
       loading: false,
       detailReportVisible: false,
-      reportDetail: {}
+      report: {},
+      reportDetail: [],
+      title: "报告详情",
+      colors: ['#99A9BF', '#F7BA2A', '#FF9900'],
+      value: '',
     };
   },
   created() {
@@ -78,9 +145,9 @@ export default {
   methods: {
     getList() {
       this.loading = true;
-      fetchList({
+      fetchAList({
         start: this.reportList.length,
-        count: this.count
+        count: this.count,
       }).then(res => {
         const data = res.data;
         let _reportList = [];
@@ -101,10 +168,35 @@ export default {
       fetchDetail({
         reportId
       }).then(res => {
-        console.log(res.data);
-        this.reportDetail = res.data;
+        this.report = res.data;
+        this.reportDetail = res.data.reportDetail[0]
       });
     },
+    editRating() {
+      const reportId = this.report._id;
+      updateScore({
+        _id: reportId,
+        value: this.value,
+      }).then(res => {
+        this.value=res.data
+      })
+    },
+    onSubmit() {
+      updateStatus(this.report).then(res => {
+
+        if(res.data.modified > 0) {
+          this.$message({
+            message: "处理完成",
+            type: "success"
+          });
+          this.getList()
+          this.detailReportVisible = false;
+        } else {
+          this.$message.error("已处理");
+        }
+        })
+    },
+
   }
 }
 

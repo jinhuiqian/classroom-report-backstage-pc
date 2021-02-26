@@ -31,7 +31,7 @@ export const constantRoutes = [
       {
         path: "allreports",
         component: () => import("@/views/allreports/allreports"),
-        meta: { title: "所有报告", icon: "table" }
+        meta: { title: "正常报告", icon: "table" }
       },
     ]
   },
