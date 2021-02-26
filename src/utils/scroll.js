@@ -1,6 +1,8 @@
 const scroll = {
   isEnd: false,
   start(callback) {
+    console.log('scroll--start')
+
     let timer = null;
     callback &&
     window.addEventListener("scroll", () => {
@@ -25,6 +27,7 @@ const scroll = {
   });
 },
 end() {
+  console.log('scroll--end')
   this.isEnd = true;
 }
 };
