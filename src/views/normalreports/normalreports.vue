@@ -36,7 +36,6 @@
             </el-rate>
           </template>
         </el-table-column>
-        <el-table-column label="状态" prop="status" sortable></el-table-column>
         <el-table-column label="操作">
           <template slot-scope="scope">
             <el-button size="mini" type="text" @click="showDetail(scope.row)"
@@ -209,18 +208,6 @@
             </el-option>
           </el-select>
         </el-col>
-        <el-col :span="7">
-          状态：
-          <el-select v-model="value4" placeholder="请选择">
-            <el-option
-              v-for="item in options1"
-              :key="item.value4"
-              :label="item.label2"
-              :value="item.value4"
-            >
-            </el-option>
-          </el-select>
-        </el-col>
       </el-row>
 
       <span slot="footer" class="dialog-footer">
@@ -234,7 +221,7 @@
 
 <script>
 import {
-  fetchAList,
+  fetchNList,
   fetchDetail,
   updateStatus,
   updateScore,
@@ -360,7 +347,7 @@ export default {
   methods: {
     getList() {
       this.loading = true;
-      fetchAList({
+      fetchNList({
         start: this.reportList.length,
       }).then((res) => {
         const data = res.data;

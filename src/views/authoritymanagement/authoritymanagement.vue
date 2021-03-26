@@ -121,7 +121,7 @@ import {
   deleteAdmin,
   addAdmin,
   updateInfo,
-  setSuperAdmin,
+  setSuperAdmin
 } from "@/api/user";
 import scroll from "@/utils/scroll";
 import { mapGetters } from "vuex";
@@ -135,15 +135,14 @@ export default {
       repassword: "",
       loading: false,
       adminList: [],
-      count: 1,
       delDialogVisible: false,
       info: {},
       updateInfoFlag: false,
       updateAuthFlag: false,
       updateBody: {
         phone: "",
-        password: "",
-      },
+        password: ""
+      }
     };
   },
   mounted() {
@@ -153,7 +152,7 @@ export default {
     this.getList();
   },
   computed: {
-    ...mapGetters(["isSuperAdmin", "admin"]),
+    ...mapGetters(["isSuperAdmin", "admin"])
   },
   methods: {
     // 修改权限相关
@@ -165,8 +164,8 @@ export default {
     doUpdateAuth() {
       setSuperAdmin({
         job_number: this.info.job_number,
-        authority: 1,
-      }).then((res) => {
+        authority: 1
+      }).then(res => {
         this.updateAuthFlag = false;
         console.log(res);
         if (res.data.modified > 0) {
@@ -174,7 +173,7 @@ export default {
           this.getList();
           this.$message({
             message: "已设为超级管理员",
-            type: "success",
+            type: "success"
           });
         } else {
           this.$message.error("修改失败");
@@ -185,7 +184,7 @@ export default {
     onUpdate() {
       this.updateBody = {
         phone: "",
-        password: "",
+        password: ""
       };
       this.updateInfoFlag = true;
     },
@@ -199,16 +198,19 @@ export default {
         updateInfo({
           id: this.admin._id,
           phone: this.updateBody.phone,
-          password: this.updateBody.password,
-        }).then((res) => {
+          password: this.updateBody.password
+        }).then(res => {
           if (res.data.modified > 0) {
             this.$message({
               message: "修改成功",
-              type: "success",
+              type: "success"
             });
+            this.adminList = [];
+            this.getList();
           } else {
             this.$message.error("修改失败");
           }
+          this.updateInfoFlag = false;
         });
       } else {
         this.$message.error("新手机号长度必须为11位，新密码长度请大于6位");
@@ -218,9 +220,9 @@ export default {
     getList() {
       this.loading = true;
       fetchList({
-        start: this.adminList.length,
-        count: this.count,
-      }).then((res) => {
+        count: 5,
+        start: this.adminList.length
+      }).then(res => {
         this.loading = false;
         console.log(res);
         this.adminList = this.adminList.concat(res.data);
@@ -231,7 +233,7 @@ export default {
     },
     // 删除管理员相关
     doDel() {
-      deleteAdmin({ id: this.info.id }).then((res) => {
+      deleteAdmin({ id: this.info.id }).then(res => {
         console.log(res.data);
         this.delDialogVisible = false;
         if (res.data.deleted > 0) {
@@ -239,7 +241,7 @@ export default {
           this.getList();
           this.$message({
             message: "删除成功",
-            type: "success",
+            type: "success"
           });
         } else {
           this.$message.error("删除失败");
@@ -275,25 +277,32 @@ export default {
           job_number: this.job_number,
           password: this.password,
           phone: this.phone,
-          username: this.username,
+          username: this.username
         };
         console.log(admin);
-        addAdmin(admin).then((res) => {
+        addAdmin(admin).then(res => {
           console.log(res);
           if (res.data == "账号已存在") {
             this.$message.error("账号已存在");
           } else {
             this.$message({
               message: "添加成功",
-              type: "success",
+              type: "success"
             });
+            this.username = "";
+            this.job_number = "";
+            this.phone = "";
+            this.password = "";
+            this.repassword = "";
+            this.adminList = [];
+            this.getList();
           }
         });
       } else {
         this.$message.error("信息格式不正确");
       }
-    },
-  },
+    }
+  }
 };
 </script>
 
