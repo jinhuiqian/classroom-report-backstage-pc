@@ -25,12 +25,12 @@ export const constantRoutes = [
     ]
   },
   {
-    path: "/allreports",
+    path: "/normalreports",
     component: Layout,
     children: [
       {
-        path: "allreports",
-        component: () => import("@/views/allreports/allreports"),
+        path: "normalreports",
+        component: () => import("@/views/normalreports/normalreports"),
         meta: { title: "正常报告", icon: "table" }
       },
     ]
@@ -59,6 +59,20 @@ export const constantRoutes = [
         meta: {
           title: "权限管理",
           icon: "user"
+        }
+      }
+    ]
+  },
+  {
+    path: '/QRCode',
+    component: Layout,
+    children: [
+      {
+        path: 'QRCode',
+        component: () => import('@/views/QRCode/QRCode'),
+        meta: {
+          title: '教室管理',
+          icon: 'el-icon-s-tools'
         }
       }
     ]
