@@ -19,8 +19,11 @@
       <el-button @click="showFilter" type="primary" class="button"
         >条件筛选</el-button
       >
+      <el-button @click="reset" type="primary" class="button"
+        >重置表格</el-button
+      >
       <el-button @click="exportExcel" type="primary" class="button"
-        >导出</el-button
+        >导出数据</el-button
       >
 
       <el-table
@@ -522,18 +525,10 @@ export default {
     },
     loadAll1() {
       return [
-        { value: "教四323" },
-        { value: "教四121" },
-        { value: "教四123" },
-        { value: "教四222" },
       ];
     },
     loadAll2() {
       return [
-        { value: "软件1921" },
-        { value: "软件1911" },
-        { value: "大数据1911" },
-        { value: "移动1921" },
       ];
     },
     handleSelect(item) {
@@ -596,6 +591,9 @@ export default {
         this.reportList = this.reportList.concat(_reportList);
         });
       this.filterVisible = false;
+    },
+    reset() {
+      this.getList()
     }
   },
 };
