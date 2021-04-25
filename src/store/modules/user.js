@@ -41,7 +41,6 @@ const actions = {
     const { account, password } = userInfo
     return new Promise((resolve, reject) => {
       loginByPhone({ phone: account.trim(), password: password }).then(response => {
-        console.log(response)
         commit('SET_TOKEN', response.token)
         setToken(response.token)
         resolve()
@@ -55,7 +54,6 @@ const actions = {
     const { account, password } = userInfo
     return new Promise((resolve, reject) => {
       loginByJN({ job_number: account.trim(), password: password }).then(response => {
-        console.log(response)
         commit('SET_TOKEN', response.token)
         setToken(response.token)
         resolve()
@@ -70,7 +68,6 @@ const actions = {
     const { account, password } = userInfo
     return new Promise((resolve, reject) => {
       login({ account: account.trim(), password: password }).then(response => {
-        console.log(response)
         const { data } = response
         commit('SET_TOKEN', data.token)
         setToken(data.token)
@@ -86,7 +83,6 @@ const actions = {
     return new Promise((resolve, reject) => {
       getInfo(state.token).then(response => {
         const { data } = response
-        console.log(response)
         if (!data) {
           return reject('Verification failed, please Login again.')
         }

@@ -68,14 +68,15 @@
 
     </div>
   </el-col>
-
 </el-row>
+
 </div>
 </template>
 
 <script>
 import { fetchNListCount,fetchAListCount,fetchUnratedReport,fetchunProcessedReport } from "@/api/report"
 import scroll from "@/utils/scroll"
+
 export default {
   data() {
     return {
@@ -86,7 +87,7 @@ export default {
       nreportList: [],
       areportList: [],
       unratedreport: [],
-      unprocessedreport: []
+      unprocessedreport: [],
     }
   },
   created() {

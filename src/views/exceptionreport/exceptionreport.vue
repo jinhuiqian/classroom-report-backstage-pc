@@ -1,12 +1,36 @@
 <template>
   <div class="bg">
     <div class="a">
+
+            <el-date-picker
+              v-model="value2"
+              type="daterange"
+              align="right"
+              unlink-panels
+              range-separator="至"
+              start-placeholder="开始日期"
+              end-placeholder="结束日期"
+              :picker-options="pickerOptions"
+            >
+            </el-date-picker>
+      <el-button @click="screening" type="primary" class="button"
+        >时间范围</el-button
+      >
+      <el-button @click="showFilter" type="primary" class="button"
+        >条件筛选</el-button
+      >
+      <el-button @click="reset" type="primary" class="button"
+        >重置表格</el-button
+      >
+      <el-button @click="exportExcel" type="primary" class="button"
+        >导出数据</el-button
+      >
+
       <el-table
         v-loading="loading"
         :data="
           reportList.slice((currentPage - 1) * pagesize, currentPage * pagesize)
         "
-        stripe
         class="table"
       >
         <el-table-column type="index" width="50" label="编号"></el-table-column>
@@ -36,7 +60,11 @@
             </el-rate>
           </template>
         </el-table-column>
-        <el-table-column label="状态" prop="status" sortable></el-table-column>
+        <el-table-column label="状态" prop="status" sortable>
+                    <template slot-scope="scope">
+            <el-button v-model="scope.row.status" :class="scope.row.status =='已处理'?'green': 'yellow'" type="text" >{{scope.row.status}}</el-button>
+          </template>
+        </el-table-column>
         <el-table-column label="操作">
           <template slot-scope="scope">
             <el-button size="mini" type="text" @click="showDetail(scope.row)"
@@ -52,20 +80,14 @@
             @size-change="handleSizeChange"
             @current-change="handleCurrentChange"
             :current-page="currentPage"
-            :page-size="pageSize"
+            :page-size="pagesize"
             layout="total, prev, pager, next, jumper"
-            :total="reportList.length * 10 - 10"
+            :total="reportList.length"
           >
           </el-pagination>
         </el-col>
       </el-row>
 
-      <el-button @click="showFilter" type="primary" class="button"
-        >筛选</el-button
-      >
-      <el-button @click="exportExcel" type="primary" class="button"
-        >导出</el-button
-      >
     </div>
 
     <!-- 详情对话框 -->
@@ -139,7 +161,7 @@
 
       <span slot="footer" class="dialog-footer">
         <span class="demonstration">卫生评分</span>
-        <el-rate v-model="value" :colors="colors" show-score=""> </el-rate>
+        <el-rate v-model="value" :colors="colors" show-score=""  :allow-half="half"> </el-rate>
         <el-button @click="editRating">修改评分</el-button>
         <!-- <el-button type="primary" @click="onSubmit">处 理</el-button> -->
         <el-button type="primary" @click="open">处 理</el-button>
@@ -178,25 +200,6 @@
       </el-row>
       <br />
       <el-row :gutter="14">
-        <el-col :span="14">
-          <div class="block">
-            时间范围：
-            <el-date-picker
-              v-model="value2"
-              type="daterange"
-              align="right"
-              unlink-panels
-              range-separator="至"
-              start-placeholder="开始日期"
-              end-placeholder="结束日期"
-              :picker-options="pickerOptions"
-            >
-            </el-date-picker>
-          </div>
-        </el-col>
-      </el-row>
-      <br />
-      <el-row :gutter="14">
         <el-col :span="7">
           评分：
           <el-select v-model="value3" placeholder="请选择">
@@ -224,9 +227,9 @@
       </el-row>
 
       <span slot="footer" class="dialog-footer">
-        <el-button @click="screening">筛 选</el-button>
+        <el-button @click="screeninginfo">筛 选</el-button>
         <!-- <el-button type="primary" @click="onSubmit">处 理</el-button> -->
-        <el-button type="primary">取 消</el-button>
+        <el-button type="primary" @click="closeFilter">取 消</el-button>
       </span>
     </el-dialog>
   </div>
@@ -259,13 +262,14 @@ export default {
       title: "报告详情",
       title1: "筛选",
       colors: ["#99A9BF", "#F7BA2A", "#FF9900"],
-      value: "",
+      value: 0,
       currentPage: 1, //初始页
-      pagesize: 2, //每页的数据
+      pagesize: 7, //每页的数据
       restaurants1: [],
       restaurants2: [],
       state1: "",
       state2: "",
+      half: true,
       pickerOptions: {
         disabledDate(time) {
           return time.getTime() > Date.now() - 8.64e7; //对小于开始日期范围禁用,否则反之即可
@@ -304,8 +308,8 @@ export default {
       value2: "",
       options: [
         {
-          value3: null,
-          label1: null,
+          value3: undefined,
+          label1: undefined,
         },
         {
           value3: 1,
@@ -331,15 +335,15 @@ export default {
       value3: "",
       options1: [
         {
-          value4: null,
-          label2: null,
+          value4: undefined,
+          label2: undefined,
         },
         {
-          value4: 1,
+          value4: "已处理",
           label2: "已处理",
         },
         {
-          value4: 2,
+          value4: "未处理",
           label2: "未处理",
         },
       ],
@@ -364,9 +368,6 @@ export default {
         start: this.reportList.length,
       }).then((res) => {
         const data = res.data;
-        console.log("*****************");
-        console.log(data);
-        console.log("*****************");
         let _reportList = [];
         for (let i = 0, len = data.length; i < len; i++) {
           _reportList.push(JSON.parse(data[i]));
@@ -390,14 +391,15 @@ export default {
         let one = this.report.time.$numberDouble.toString().split('E')[0].split('.')[0]
         let two = this.report.time.$numberDouble.toString().split('E')[0].split('.')[1]
         this.report.time = one+two
-        console.log(this.report.time);
         this.reportDetail = res.data.reportDetail[0];
-        console.log(this.reportDetail);
       });
     },
     //显示筛选
     showFilter() {
       this.filterVisible = true;
+    },
+    closeFilter() {
+      this.filterVisible = false;
     },
     editRating() {
       const reportId = this.report._id;
@@ -407,14 +409,13 @@ export default {
       }).then((res) => {
         this.value = res.data;
         this.reportList = [];
-        this.getList();
+        this.getList()
         this.detailReportVisible = false;
       });
     },
 
     onSubmit() {
       updateStatus(this.report).then((res) => {
-        console.log(res);
         if (res.data.modified > 0) {
           this.$message({
             message: "处理完成",
@@ -440,7 +441,6 @@ export default {
         let month = time.getMonth() + 1;
         let day = time.getDate();
         let name = year + "" + month + "" + day;
-        // console.log(name)
         /* generate workbook object from table */
         //  .table要导出的是哪一个表格
         var wb = XLSX.utils.table_to_book(document.querySelector(".table"));
@@ -459,7 +459,7 @@ export default {
         } catch (e) {
           if (typeof console !== "undefined") console.log(e, wbout);
         }
-        this.pagesize = 2;
+        this.pagesize = 10;
         return wbout;
       });
     },
@@ -467,11 +467,9 @@ export default {
     //分页用到的一些方法
     handleSizeChange: function (size) {
       this.pagesize = size;
-      // console.log(this.pagesize)//每页下拉显示数据
     },
     handleCurrentChange: function (currentPage) {
       this.currentPage = currentPage;
-      // console.log(this.currentPage)  //点击第几页
     },
 
     open() {
@@ -527,42 +525,75 @@ export default {
     },
     loadAll1() {
       return [
-        { value: "教四323" },
-        { value: "教四121" },
-        { value: "教四123" },
-        { value: "教四222" },
       ];
     },
     loadAll2() {
       return [
-        { value: "软件1921" },
-        { value: "软件1911" },
-        { value: "大数据1911" },
-        { value: "移动1921" },
       ];
     },
     handleSelect(item) {
-      console.log(item);
     },
     screening() {
-      // let report = {
-      //   classroom: this.state1,
-      //   user_class: this.state2,
-      //   score: this.value3,
-      //   status: this.value4
-      // }
       let start = new Date(this.value2[0]).getTime();
       let end = new Date(this.value2[1]).getTime();
       filtertime({
         start: start,
         end: end,
+        if: 2
       }).then((res) => {
+        const data = res.data.data;
         this.reportList = [];
-        this.reportList = res.data.data;
-        console.log(this.reportList);
+        let _reportList = [];
+        for (let i = 0, len = data.length; i < len; i++) {
+          _reportList.push(JSON.parse(data[i]));
+        }
+        this.reportList = this.reportList.concat(_reportList);
       });
       this.filterVisible = false;
     },
+    screeninginfo() {
+      let report = {
+        classroom: this.state1,
+        user_class: this.state2,
+        score: this.value3,
+        status: this.value4,
+      }
+      if(report.classroom == ""){
+      delete report.classroom
+      }
+      if(report.user_class == ""){
+      delete report.user_class
+      }
+      if(report.score == ""){
+      delete report.score
+      }
+      if(report.status == ""){
+      delete report.status
+      }
+      filter({
+        classroom: report.classroom,
+        user_class: report.user_class,
+        score: report.score,
+        status: report.status,
+        if: 2
+      }).then((res) => {
+        const data = res.data.data;
+        this.reportList = [];
+        let _reportList = [];
+        for (let i = 0, len = data.length; i < len; i++) {
+          _reportList.push(JSON.parse(data[i]));
+        }
+        this.state1 = undefined;
+        this.state2 = undefined;
+        this.value3 = undefined;
+        this.value4 = undefined;
+        this.reportList = this.reportList.concat(_reportList);
+        });
+      this.filterVisible = false;
+    },
+    reset() {
+      this.getList()
+    }
   },
 };
 </script>
@@ -581,5 +612,15 @@ export default {
 }
 .b {
   padding-top: 15px;
+}
+.button{
+  margin-bottom: 10px;
+  margin-left: 10px;
+}
+.green{
+  color: #00ac00;
+}
+.yellow{
+  color: #dada15;
 }
 </style>

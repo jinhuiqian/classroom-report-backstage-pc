@@ -132,13 +132,11 @@ export default {
       });
     },
     jobNumLogin() {
-      console.log("工号");
       this.$store.dispatch("user/loginByJN", this.loginForm).then((res) => {
         this.$router.push({ path: this.redirect || "/" });
       });
     },
     phoneLogin() {
-      console.log("手机号");
       this.$store.dispatch("user/loginByPhone", this.loginForm).then((res) => {
         this.$router.push({ path: this.redirect || "/" });
       });
