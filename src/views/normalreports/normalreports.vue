@@ -60,7 +60,11 @@
             </el-rate>
           </template>
         </el-table-column>
-        <el-table-column label="状态" prop="status" sortable></el-table-column>
+        <el-table-column label="状态" prop="status" sortable>
+          <template slot-scope="scope">
+            <el-button v-model="scope.row.status" :class="scope.row.status =='已处理'?'green': 'yellow'" type="text">{{scope.row.status}}</el-button>
+          </template>
+        </el-table-column>
         <el-table-column label="操作">
           <template slot-scope="scope">
             <el-button size="mini" type="text" @click="showDetail(scope.row)"
@@ -156,9 +160,10 @@
       </el-row>
 
       <span slot="footer" class="dialog-footer">
-        <span class="demonstration">卫生评分</span>
-        <el-rate v-model="value" :colors="colors" show-score=""> </el-rate>
-        <el-button @click="editRating">修改评分</el-button>
+        <span class="demonstration">卫生评分： </span>
+        <span> {{value}}</span>
+        <el-rate v-model="value" :colors="colors" :allow-half="half"> </el-rate>
+        <el-button @click="editRating"  >修改评分</el-button>
         <!-- <el-button type="primary" @click="onSubmit">处 理</el-button> -->
         <el-button type="primary" @click="open">处 理</el-button>
       </span>
@@ -262,11 +267,12 @@ export default {
       colors: ["#99A9BF", "#F7BA2A", "#FF9900"],
       value: 0,
       currentPage: 1, //初始页
-      pagesize: 10, //每页的数据
+      pagesize: 7, //每页的数据
       restaurants1: [],
       restaurants2: [],
       state1: "",
       state2: "",
+      half: true,
       pickerOptions: {
         disabledDate(time) {
           return time.getTime() > Date.now() - 8.64e7; //对小于开始日期范围禁用,否则反之即可
@@ -305,8 +311,8 @@ export default {
       value2: "",
       options: [
         {
-          value3: null,
-          label1: null,
+          value3: undefined,
+          label1: undefined,
         },
         {
           value3: 1,
@@ -332,8 +338,8 @@ export default {
       value3: "",
       options1: [
         {
-          value4: null,
-          label2: null,
+          value4: undefined,
+          label2: undefined,
         },
         {
           value4: "已处理",
@@ -370,9 +376,6 @@ export default {
           _reportList.push(JSON.parse(data[i]));
         }
         this.reportList = this.reportList.concat(_reportList);
-        console.log("*******************");
-        console.log(this.reportList);
-        console.log("*******************");
         if (_reportList.length < this.count) {
           scroll.end();
         }
@@ -384,7 +387,6 @@ export default {
       this.detailReportVisible = true;
       const reportId = report._id;
       this.value = report.score;
-      console.log(this.value);
       fetchDetail({
         reportId,
       }).then((res) => {
@@ -442,7 +444,6 @@ export default {
         let month = time.getMonth() + 1;
         let day = time.getDate();
         let name = year + "" + month + "" + day;
-        // console.log(name)
         /* generate workbook object from table */
         //  .table要导出的是哪一个表格
         var wb = XLSX.utils.table_to_book(document.querySelector(".table"));
@@ -541,6 +542,7 @@ export default {
       filtertime({
         start: start,
         end: end,
+        if: 1
       }).then((res) => {
         const data = res.data.data;
         this.reportList = [];
@@ -571,30 +573,29 @@ export default {
       if(report.status == ""){
       delete report.status
       }
-      console.log(3242);
-      console.log(report);
       filter({
         classroom: report.classroom,
         user_class: report.user_class,
         score: report.score,
         status: report.status,
-        if: 2
+        if: 1
       }).then((res) => {
         const data = res.data.data;
-        console.log(9080);
-        console.log(data);
         this.reportList = [];
         let _reportList = [];
         for (let i = 0, len = data.length; i < len; i++) {
           _reportList.push(JSON.parse(data[i]));
         }
-        console.log(889);
-        console.log(_reportList);
+        this.state1 = undefined;
+        this.state2 = undefined;
+        this.value3 = undefined;
+        this.value4 = undefined;
         this.reportList = this.reportList.concat(_reportList);
         });
       this.filterVisible = false;
     },
     reset() {
+      this.reportList = [];
       this.getList()
     }
   },
@@ -619,5 +620,11 @@ export default {
 .button{
   margin-bottom: 10px;
   margin-left: 10px;
+}
+.green{
+  color: #00ac00;
+}
+.yellow{
+  color: #dada15;
 }
 </style>

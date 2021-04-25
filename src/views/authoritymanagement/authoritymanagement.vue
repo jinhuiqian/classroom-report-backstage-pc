@@ -65,7 +65,7 @@
     </div>
 
     <h2>管理员列表</h2>
-    <el-table v-loading="loading" :data="adminList" stripe>
+    <el-table v-loading="loading" :data="adminList" stripe :height="[isSuperAdmin ? 200 : 600]">
       <el-table-column label="工号" prop="job_number"></el-table-column>
       <el-table-column label="姓名" prop="username"></el-table-column>
       <el-table-column label="手机号" prop="phone"></el-table-column>
@@ -107,11 +107,6 @@
         <el-button type="primary" @click="doUpdateAuth">确 定</el-button>
       </span>
     </el-dialog>
-
-    <!-- 加载更多管理员 -->
-    <div class="loadMore">
-      <el-button class="more" plain @click="loadMore">加载更多</el-button>
-    </div>
   </div>
 </template>
 
@@ -159,7 +154,6 @@ export default {
     onUpdateAuth(row) {
       this.updateAuthFlag = true;
       this.info.job_number = row.job_number;
-      console.log(this.info);
     },
     doUpdateAuth() {
       setSuperAdmin({
@@ -167,7 +161,6 @@ export default {
         authority: 1
       }).then(res => {
         this.updateAuthFlag = false;
-        console.log(res);
         if (res.data.modified > 0) {
           this.adminList = [];
           this.getList();
@@ -224,7 +217,6 @@ export default {
         start: this.adminList.length
       }).then(res => {
         this.loading = false;
-        console.log(res);
         this.adminList = this.adminList.concat(res.data);
         if (res.data.length < this.count) {
           scroll.end();
@@ -234,7 +226,6 @@ export default {
     // 删除管理员相关
     doDel() {
       deleteAdmin({ id: this.info.id }).then(res => {
-        console.log(res.data);
         this.delDialogVisible = false;
         if (res.data.deleted > 0) {
           this.adminList = [];
@@ -251,11 +242,6 @@ export default {
     onDel(row) {
       this.delDialogVisible = true;
       this.info.id = row._id;
-      console.log(this.info);
-    },
-    // 加载管理员
-    loadMore() {
-      this.getList();
     },
     // 验证添加管理员信息
     vaildInfo() {
@@ -271,7 +257,6 @@ export default {
     },
     // 添加管理员
     submitAdd() {
-      console.log(this.vaildInfo());
       if (this.vaildInfo()) {
         let admin = {
           job_number: this.job_number,
@@ -279,9 +264,7 @@ export default {
           phone: this.phone,
           username: this.username
         };
-        console.log(admin);
         addAdmin(admin).then(res => {
-          console.log(res);
           if (res.data == "账号已存在") {
             this.$message.error("账号已存在");
           } else {

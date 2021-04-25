@@ -94,7 +94,6 @@ export default {
         start: this.count * (this.currentPage - 1),
         count: this.count
       }).then((res) => {
-        console.log(res)
         if (res.data === '没有教室') {
           this.$message({
             message: '教室为空',
@@ -137,14 +136,13 @@ export default {
       const flag = this.classNumberVaild(this.class_number)
       if (!flag) {
         this.$message({
-          message: '教室编号格式错误，(格式：J4-123)',
+          message: '教室编号格式错误，(格式：J4-121)',
           type: 'error'
         })
       } else {
         uploadCode({
           scene: this.class_number
         }).then((res) => {
-          console.log(res)
           if (res.data !== '') {
             this.$message({
               message: '添加成功',
@@ -152,6 +150,7 @@ export default {
             })
             this.codeList = []
             this.getList()
+            this.getListLength()
             this.uploadInfoFlag = false
           } else {
             this.$message({
