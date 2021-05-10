@@ -42,11 +42,13 @@
             <span>{{ scope.row.time | parseTime("{y}-{m}-{d}") }}</span>
           </template>
         </el-table-column>
-        <el-table-column
-          label="类型"
-        >
+        <el-table-column label="类型" sortable>
           <template slot-scope="scope">
-            <span>{{ scope.row.if == 1 ? "正常报告": "异常报告"}}</span>
+            <el-button
+              :class="scope.row.if == '1' ? 'green' : 'red'"
+              type="text"
+              >{{ scope.row.if == 1 ? "正常报告" : "异常报告" }}</el-button
+            >
           </template>
         </el-table-column>
         <el-table-column label="评分" prop="score" sortable>
@@ -247,8 +249,8 @@ import {
   updateFeedback,
   filter,
   filtertime,
-  fetchNListCount,
-  fetchUPList
+  fetchUPListCount,
+  fetchUPList,
 } from "@/api/report";
 import FileSaver from "file-saver";
 import XLSX from "xlsx";
@@ -359,7 +361,7 @@ export default {
     this.getList();
   },
   mounted() {
-    fetchNListCount({}).then((res) => {
+    fetchUPListCount({}).then((res) => {
       this.total = res.data;
     });
     this.restaurants1 = this.loadAll1();
@@ -372,7 +374,7 @@ export default {
     getList() {
       this.loading = true;
       fetchUPList({
-        start: 7*(this.currentPage-1),
+        start: 7 * (this.currentPage - 1),
       }).then((res) => {
         const data = res.data;
         let _reportList = [];
@@ -630,5 +632,8 @@ export default {
 }
 .yellow {
   color: #dada15;
+}
+.red{
+  color: #db3a3a;
 }
 </style>

@@ -44,8 +44,7 @@
 import {
   fetchNListCount,
   fetchAListCount,
-  fetchUnratedReport,
-  fetchunProcessedReport,
+  fetchUPListCount,
 } from "@/api/report";
 
 export default {
@@ -74,10 +73,7 @@ export default {
       fetchAListCount({}).then((res) => {
         this.areportList = res.data;
       });
-      fetchUnratedReport({}).then((res) => {
-        this.unratedreport = res.data;
-      });
-      fetchunProcessedReport({}).then((res) => {
+      fetchUPListCount({}).then((res) => {
         this.unprocessedreport = res.data;
       });
     },

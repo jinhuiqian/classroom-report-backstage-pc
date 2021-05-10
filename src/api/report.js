@@ -1,8 +1,8 @@
 import request from '@/utils/request'
 // const baseURL = 'https://flobby-3gkbs7rb8f7e282e-1305016829.ap-shanghai.service.tcloudbase.com/api'
 
-const baseURL = 'http://47.117.115.147:3000'
-// const baseURL = 'http://localhost:3000'
+// const baseURL = 'http://47.117.115.147:3000'
+const baseURL = 'http://localhost:3000'
 
 export function fetchUPList(params) {
   return request({
@@ -34,6 +34,16 @@ export function fetchNCListCount(params) {
   })
 }
 
+export function fetchUPListCount(params) {
+  return request({
+    url: `${baseURL}/report/unprocessedreport`,
+    method: 'get',
+    params: {
+      ...params
+    }
+  })
+}
+
 export function fetchNListCount(params) {
   return request({
     url: `${baseURL}/report/nlistcount`,
@@ -47,26 +57,6 @@ export function fetchNListCount(params) {
 export function fetchAListCount(params) {
   return request({
     url: `${baseURL}/report/alistcount`,
-    method: 'get',
-    params: {
-      ...params
-    }
-  })
-}
-
-export function fetchUnratedReport(params) {
-  return request({
-    url: `${baseURL}/report/unratedreport`,
-    method: 'get',
-    params: {
-      ...params
-    }
-  })
-}
-
-export function fetchunProcessedReport(params) {
-  return request({
-    url: `${baseURL}/report/unprocessedreport`,
     method: 'get',
     params: {
       ...params

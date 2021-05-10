@@ -1,7 +1,7 @@
 import request from '@/utils/request'
 
-const baseURL = 'http://47.117.115.147:3000'
-// const baseURL = 'http://localhost:3000'
+// const baseURL = 'http://47.117.115.147:3000'
+const baseURL = 'http://localhost:3000'
 
 export function uploadCode(params) {
   return request({
