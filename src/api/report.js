@@ -1,126 +1,166 @@
-import request from "@/utils/request";
+import request from '@/utils/request'
 // const baseURL = 'https://flobby-3gkbs7rb8f7e282e-1305016829.ap-shanghai.service.tcloudbase.com/api'
+
 const baseURL = 'http://47.117.115.147:3000'
 // const baseURL = 'http://localhost:3000'
+
+export function fetchUPList(params) {
+  return request({
+    url: `${baseURL}/report/uplist`,
+    method: 'get',
+    params: {
+      ...params
+    }
+  })
+}
+
+export function fetchNCList(params) {
+  return request({
+    url: `${baseURL}/report/nclist`,
+    method: 'get',
+    params: {
+      ...params
+    }
+  })
+}
+
+export function fetchNCListCount(params) {
+  return request({
+    url: `${baseURL}/report/ncreportcount`,
+    method: 'get',
+    params: {
+      ...params
+    }
+  })
+}
 
 export function fetchNListCount(params) {
   return request({
     url: `${baseURL}/report/nlistcount`,
-    method: "get",
+    method: 'get',
     params: {
       ...params
     }
-  });
+  })
 }
 
 export function fetchAListCount(params) {
   return request({
     url: `${baseURL}/report/alistcount`,
-    method: "get",
+    method: 'get',
     params: {
       ...params
     }
-  });
+  })
 }
 
 export function fetchUnratedReport(params) {
   return request({
     url: `${baseURL}/report/unratedreport`,
-    method: "get",
+    method: 'get',
     params: {
       ...params
     }
-  });
+  })
 }
 
 export function fetchunProcessedReport(params) {
   return request({
     url: `${baseURL}/report/unprocessedreport`,
-    method: "get",
+    method: 'get',
     params: {
       ...params
     }
-  });
+  })
 }
 
 export function fetchNList(params) {
   return request({
     url: `${baseURL}/report/nlist`,
-    method: "get",
+    method: 'get',
     params: {
       ...params
     }
-  });
+  })
 }
 
 export function fetchAList(params) {
   return request({
     url: `${baseURL}/report/alist`,
-    method: "get",
+    method: 'get',
     params: {
       ...params
     }
-  });
+  })
 }
 
 export function fetchDetail(params) {
   return request({
     url: `${baseURL}/report/detail`,
-    method: "get",
+    method: 'get',
     params: {
       ...params
     }
-  });
+  })
 }
 
 export function updateStatus(params) {
-    return request ({
-      url: `${baseURL}/report/updatestatus`,
-      method: "post",
-      data: {
-        ...params
-      },
-    });
+  return request({
+    url: `${baseURL}/report/updatestatus`,
+    method: 'post',
+    data: {
+      ...params
+    }
+  })
 }
 
 export function updateScore(params) {
-  return request ({
+  return request({
     url: `${baseURL}/report/updatescore`,
-    method: "post",
+    method: 'post',
     data: {
       ...params
-    },
-  });
+    }
+  })
 }
 
 export function updateFeedback(params) {
-  return request ({
+  return request({
     url: `${baseURL}/report/updatefeedback`,
-    method: "post",
+    method: 'post',
     data: {
       ...params
-    },
-  });
+    }
+  })
 }
 
 export function filtertime(params) {
-  return request ({
+  return request({
     url: `${baseURL}/report/filtertime`,
-    method: "post",
+    method: 'post',
     data: {
       ...params
-    },
-  });
+    }
+  })
 }
 
 export function filter(params) {
-  return request ({
+  return request({
     url: `${baseURL}/report/filter`,
-    method: "post",
+    method: 'post',
+    data: {
+      ...params
+    }
+  })
+}
+
+// 添加未打扫记录
+export function addNotClean(params) {
+  return request({
+    url: `${baseURL}/report/addNotClean`,
     data: {
       ...params
     },
-  });
+    method: 'post'
+  })
 }
-
-

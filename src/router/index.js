@@ -25,6 +25,20 @@ export const constantRoutes = [
     ]
   },
   {
+    path: '/unprocessedReport',
+    component: Layout,
+    children: [
+      {
+        path: 'unprocessedReport',
+        component: () => import('@/views/unprocessedReport/unprocessedReport'),
+        meta: {
+          title: '未处理报告',
+          icon: 'el-icon-warning'
+        }
+      }
+    ]
+  },
+  {
     path: "/normalreports",
     component: Layout,
     children: [
@@ -45,6 +59,20 @@ export const constantRoutes = [
         meta: {
           title: "异常报告",
           icon: "example"
+        }
+      }
+    ]
+  },
+    {
+    path: "/notclean",
+    component: Layout,
+    children: [
+      {
+        path: "notclean",
+        component: () => import("@/views/notclean/notclean"),
+        meta: {
+          title: "未打扫记录",
+          icon: "el-icon-s-release"
         }
       }
     ]

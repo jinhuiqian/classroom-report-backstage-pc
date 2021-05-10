@@ -1,18 +1,17 @@
 <template>
   <div class="bg">
     <div class="a">
-
-            <el-date-picker
-              v-model="value2"
-              type="daterange"
-              align="right"
-              unlink-panels
-              range-separator="至"
-              start-placeholder="开始日期"
-              end-placeholder="结束日期"
-              :picker-options="pickerOptions"
-            >
-            </el-date-picker>
+      <el-date-picker
+        v-model="value2"
+        type="daterange"
+        align="right"
+        unlink-panels
+        range-separator="至"
+        start-placeholder="开始日期"
+        end-placeholder="结束日期"
+        :picker-options="pickerOptions"
+      >
+      </el-date-picker>
       <el-button @click="screening" type="primary" class="button"
         >时间范围</el-button
       >
@@ -26,13 +25,7 @@
         >导出数据</el-button
       >
 
-      <el-table
-        v-loading="loading"
-        :data="
-          reportList.slice((currentPage - 1) * pagesize, currentPage * pagesize)
-        "
-        class="table"
-      >
+      <el-table v-loading="loading" :data="reportList" class="table">
         <el-table-column type="index" width="50" label="编号"></el-table-column>
         <el-table-column
           label="教室"
@@ -62,7 +55,12 @@
         </el-table-column>
         <el-table-column label="状态" prop="status" sortable>
           <template slot-scope="scope">
-            <el-button v-model="scope.row.status" :class="scope.row.status =='已处理'?'green': 'yellow'" type="text">{{scope.row.status}}</el-button>
+            <el-button
+              v-model="scope.row.status"
+              :class="scope.row.status == '已处理' ? 'green' : 'yellow'"
+              type="text"
+              >{{ scope.row.status }}</el-button
+            >
           </template>
         </el-table-column>
         <el-table-column label="操作">
@@ -77,17 +75,15 @@
       <el-row justify="center" type="flex">
         <el-col :span="10">
           <el-pagination
-            @size-change="handleSizeChange"
-            @current-change="handleCurrentChange"
-            :current-page="currentPage"
+            @current-change="getList"
+            :current-page.sync="currentPage"
             :page-size="pagesize"
-            layout="total, prev, pager, next, jumper"
-            :total="reportList.length"
+            layout="total, prev, pager, next"
+            :total="total"
           >
           </el-pagination>
         </el-col>
       </el-row>
-
     </div>
 
     <!-- 详情对话框 -->
@@ -161,15 +157,13 @@
 
       <span slot="footer" class="dialog-footer">
         <span class="demonstration">卫生评分： </span>
-        <span> {{value}}</span>
+        <span> {{ value }}</span>
         <el-rate v-model="value" :colors="colors" :allow-half="half"> </el-rate>
-        <el-button @click="editRating"  >修改评分</el-button>
+        <el-button @click="editRating">修改评分</el-button>
         <!-- <el-button type="primary" @click="onSubmit">处 理</el-button> -->
         <el-button type="primary" @click="open">处 理</el-button>
       </span>
     </el-dialog>
-
-
 
     <!-- 筛选对话框 -->
     <el-dialog
@@ -247,6 +241,7 @@ import {
   updateFeedback,
   filter,
   filtertime,
+  fetchNListCount,
 } from "@/api/report";
 import scroll from "@/utils/scroll";
 import FileSaver from "file-saver";
@@ -273,6 +268,7 @@ export default {
       state1: "",
       state2: "",
       half: true,
+      total: 7,
       pickerOptions: {
         disabledDate(time) {
           return time.getTime() > Date.now() - 8.64e7; //对小于开始日期范围禁用,否则反之即可
@@ -357,7 +353,9 @@ export default {
     this.getList();
   },
   mounted() {
-    scroll.start(this.getList);
+    fetchNListCount({}).then((res) => {
+      this.total = res.data;
+    });
     this.restaurants1 = this.loadAll1();
     this.restaurants2 = this.loadAll2();
   },
@@ -368,17 +366,14 @@ export default {
     getList() {
       this.loading = true;
       fetchNList({
-        start: this.reportList.length,
+        start: 7*(this.currentPage-1),
       }).then((res) => {
         const data = res.data;
         let _reportList = [];
         for (let i = 0, len = data.length; i < len; i++) {
           _reportList.push(JSON.parse(data[i]));
         }
-        this.reportList = this.reportList.concat(_reportList);
-        if (_reportList.length < this.count) {
-          scroll.end();
-        }
+        this.reportList = _reportList;
         this.loading = false;
       });
     },
@@ -391,9 +386,15 @@ export default {
         reportId,
       }).then((res) => {
         this.report = res.data;
-        let one = this.report.time.$numberDouble.toString().split('E')[0].split('.')[0]
-        let two = this.report.time.$numberDouble.toString().split('E')[0].split('.')[1]
-        this.report.time = one+two
+        let one = this.report.time.$numberDouble
+          .toString()
+          .split("E")[0]
+          .split(".")[0];
+        let two = this.report.time.$numberDouble
+          .toString()
+          .split("E")[0]
+          .split(".")[1];
+        this.report.time = one + two;
         this.reportDetail = res.data.reportDetail[0];
       });
     },
@@ -412,7 +413,7 @@ export default {
       }).then((res) => {
         this.value = res.data;
         this.reportList = [];
-        this.getList()
+        this.getList();
         this.detailReportVisible = false;
       });
     },
@@ -527,22 +528,19 @@ export default {
       };
     },
     loadAll1() {
-      return [
-      ];
+      return [];
     },
     loadAll2() {
-      return [
-      ];
+      return [];
     },
-    handleSelect(item) {
-    },
+    handleSelect(item) {},
     screening() {
       let start = new Date(this.value2[0]).getTime();
       let end = new Date(this.value2[1]).getTime();
       filtertime({
         start: start,
         end: end,
-        if: 1
+        if: 1,
       }).then((res) => {
         const data = res.data.data;
         this.reportList = [];
@@ -560,25 +558,25 @@ export default {
         user_class: this.state2,
         score: this.value3,
         status: this.value4,
+      };
+      if (report.classroom == "") {
+        delete report.classroom;
       }
-      if(report.classroom == ""){
-      delete report.classroom
+      if (report.user_class == "") {
+        delete report.user_class;
       }
-      if(report.user_class == ""){
-      delete report.user_class
+      if (report.score == "") {
+        delete report.score;
       }
-      if(report.score == ""){
-      delete report.score
-      }
-      if(report.status == ""){
-      delete report.status
+      if (report.status == "") {
+        delete report.status;
       }
       filter({
         classroom: report.classroom,
         user_class: report.user_class,
         score: report.score,
         status: report.status,
-        if: 1
+        if: 1,
       }).then((res) => {
         const data = res.data.data;
         this.reportList = [];
@@ -591,13 +589,13 @@ export default {
         this.value3 = undefined;
         this.value4 = undefined;
         this.reportList = this.reportList.concat(_reportList);
-        });
+      });
       this.filterVisible = false;
     },
     reset() {
       this.reportList = [];
-      this.getList()
-    }
+      this.getList();
+    },
   },
 };
 </script>
@@ -617,14 +615,14 @@ export default {
 .b {
   padding-top: 15px;
 }
-.button{
+.button {
   margin-bottom: 10px;
   margin-left: 10px;
 }
-.green{
+.green {
   color: #00ac00;
 }
-.yellow{
+.yellow {
   color: #dada15;
 }
 </style>

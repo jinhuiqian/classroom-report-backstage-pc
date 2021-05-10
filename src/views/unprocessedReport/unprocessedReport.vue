@@ -25,13 +25,7 @@
         >导出数据</el-button
       >
 
-      <el-table
-        v-loading="loading"
-        :data="
-          reportList
-        "
-        class="table"
-      >
+      <el-table v-loading="loading" :data="reportList" class="table">
         <el-table-column type="index" width="50" label="编号"></el-table-column>
         <el-table-column
           label="教室"
@@ -46,6 +40,13 @@
         <el-table-column label="提交时间" sortable>
           <template slot-scope="scope">
             <span>{{ scope.row.time | parseTime("{y}-{m}-{d}") }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column
+          label="类型"
+        >
+          <template slot-scope="scope">
+            <span>{{ scope.row.if == 1 ? "正常报告": "异常报告"}}</span>
           </template>
         </el-table-column>
         <el-table-column label="评分" prop="score" sortable>
@@ -82,7 +83,7 @@
         <el-col :span="10">
           <el-pagination
             @current-change="getList"
-            :current-page="currentPage"
+            :current-page.sync="currentPage"
             :page-size="pagesize"
             layout="total, prev, pager, next"
             :total="total"
@@ -162,14 +163,9 @@
       </el-row>
 
       <span slot="footer" class="dialog-footer">
-        <span class="demonstration">卫生评分</span>
-        <el-rate
-          v-model="value"
-          :colors="colors"
-          show-score=""
-          :allow-half="half"
-        >
-        </el-rate>
+        <span class="demonstration">卫生评分： </span>
+        <span> {{ value }}</span>
+        <el-rate v-model="value" :colors="colors" :allow-half="half"> </el-rate>
         <el-button @click="editRating">修改评分</el-button>
         <!-- <el-button type="primary" @click="onSubmit">处 理</el-button> -->
         <el-button type="primary" @click="open">处 理</el-button>
@@ -245,16 +241,15 @@
 
 <script>
 import {
-  fetchAList,
   fetchDetail,
   updateStatus,
   updateScore,
   updateFeedback,
   filter,
   filtertime,
-  fetchAListCount
+  fetchNListCount,
+  fetchUPList
 } from "@/api/report";
-import scroll from "@/utils/scroll";
 import FileSaver from "file-saver";
 import XLSX from "xlsx";
 import { mapGetters } from "vuex";
@@ -364,10 +359,9 @@ export default {
     this.getList();
   },
   mounted() {
-          fetchAListCount({
-      }).then(res => {
-        this.total = res.data
-      });
+    fetchNListCount({}).then((res) => {
+      this.total = res.data;
+    });
     this.restaurants1 = this.loadAll1();
     this.restaurants2 = this.loadAll2();
   },
@@ -377,7 +371,7 @@ export default {
   methods: {
     getList() {
       this.loading = true;
-      fetchAList({
+      fetchUPList({
         start: 7*(this.currentPage-1),
       }).then((res) => {
         const data = res.data;
@@ -552,7 +546,7 @@ export default {
       filtertime({
         start: start,
         end: end,
-        if: 2,
+        if: 1,
       }).then((res) => {
         const data = res.data.data;
         this.reportList = [];
@@ -588,7 +582,7 @@ export default {
         user_class: report.user_class,
         score: report.score,
         status: report.status,
-        if: 2,
+        if: 1,
       }).then((res) => {
         const data = res.data.data;
         this.reportList = [];
@@ -605,6 +599,7 @@ export default {
       this.filterVisible = false;
     },
     reset() {
+      this.reportList = [];
       this.getList();
     },
   },

@@ -62,7 +62,7 @@ export function fetchList(params) {
 }
 
 // 设为超管
-export function setSuperAdmin(params){
+export function setSuperAdmin(params) {
   return request({
     url: `${baseURL}/user/updateAuth`,
     method: 'post',
@@ -76,7 +76,7 @@ export function getInfo(token) {
   return request({
     url: `${baseURL}/user/getInfo`,
     method: 'get',
-    params: {token}
+    params: { token }
   })
 }
 

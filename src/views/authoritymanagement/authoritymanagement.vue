@@ -65,7 +65,7 @@
     </div>
 
     <h2>管理员列表</h2>
-    <el-table v-loading="loading" :data="adminList" stripe :height="[isSuperAdmin ? 200 : 600]">
+    <el-table v-loading="loading" :data="adminList" stripe :height="isSuperAdmin ? 200 : 600">
       <el-table-column label="工号" prop="job_number"></el-table-column>
       <el-table-column label="姓名" prop="username"></el-table-column>
       <el-table-column label="手机号" prop="phone"></el-table-column>
