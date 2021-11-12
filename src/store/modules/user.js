@@ -87,7 +87,6 @@ const actions = {
           return reject('Verification failed, please Login again.')
         }
         commit('SET_IsSuperAdmin', data.authority)
-        console.log(data)
         const admin = {
           _id: data._id,
           job_number: data.job_number,
