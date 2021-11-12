@@ -154,3 +154,16 @@ export function addNotClean(params) {
     method: 'post'
   })
 }
+
+// 导出数据
+export function exportRecord(params) {
+  return request({
+    // 连接超时时间
+    timeout: 60 * 60 * 1000,
+    url: `${baseURL}/report/exportData`,
+    data: {
+      ...params
+    },
+    method: 'post'
+  })
+}

@@ -5,11 +5,12 @@ import { resetRouter } from '@/router'
 const getDefaultState = () => {
   return {
     token: getToken(),
+    college: 0,
     isSuperAdmin: '',
-      job_number: '',
-      phone: '',
-      username: '',
-    avatar:'https://flobby.oss-cn-shenzhen.aliyuncs.com/avatar/4a3935d6-9579-467f-b63d-4a956414306f.jpg',
+    job_number: '',
+    phone: '',
+    username: '',
+    avatar: 'https://img.alicdn.com/tps/TB1ld1GNFXXXXXLapXXXXXXXXXX-200-200.png'
   }
 }
 
@@ -23,21 +24,20 @@ const mutations = {
     state.token = token
   },
   SET_IsSuperAdmin: (state, authority) => {
-    if(authority == 1){
+    if (authority == 1) {
       state.isSuperAdmin = true
-    }else {
+    } else {
       state.isSuperAdmin = false
     }
-
   },
   SET_Admin: (state, admin) => {
     state.admin = admin
-  },
+  }
 }
 
 const actions = {
 
-  loginByPhone({commit}, userInfo){
+  loginByPhone({ commit }, userInfo) {
     const { account, password } = userInfo
     return new Promise((resolve, reject) => {
       loginByPhone({ phone: account.trim(), password: password }).then(response => {
@@ -50,7 +50,7 @@ const actions = {
     })
   },
 
-  loginByJN({commit}, userInfo){
+  loginByJN({ commit }, userInfo) {
     const { account, password } = userInfo
     return new Promise((resolve, reject) => {
       loginByJN({ job_number: account.trim(), password: password }).then(response => {
@@ -87,11 +87,13 @@ const actions = {
           return reject('Verification failed, please Login again.')
         }
         commit('SET_IsSuperAdmin', data.authority)
+        console.log(data)
         const admin = {
           _id: data._id,
           job_number: data.job_number,
           phone: data.phone,
           username: data.username,
+          college: data.college
         }
         commit('SET_Admin', admin)
         resolve(data)
