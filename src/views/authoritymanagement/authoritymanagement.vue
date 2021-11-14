@@ -292,7 +292,6 @@ export default {
         count: this.pageSize,
         start: this.pageSize * (this.currentPage - 1)
       }).then(res => {
-        console.log(res)
         this.loading = false
         this.total = res.total
         this.adminList = []
@@ -366,7 +365,6 @@ export default {
           username: this.username,
           college: this.college
         }
-        console.log(admin)
         addAdmin(admin).then(res => {
           if (res.data === '账号已存在') {
             this.$message.error('账号已存在')

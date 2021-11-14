@@ -329,7 +329,6 @@ export default {
   methods: {
     // 列表渲染
     getList() {
-      console.log(this.admin)
       this.loading = true
       const reportCondition = {
         timeFlag: 0,
@@ -546,8 +545,8 @@ export default {
           title: '图片',
           key: 'img',
           type: 'image',
-          width: 100,
-          height: 100
+          width: 140,
+          height: 160
         },
         {
           title: '上报时间',
