@@ -79,7 +79,7 @@
       </el-collapse>
     </div>
     <h2>管理员列表</h2>
-    <el-table v-loading="loading" :data="adminList" stripe :height="isSuperAdmin ? 200 : 600">
+    <el-table v-loading="loading" :data="adminList" stripe :height="305">
       <el-table-column label="学院" prop="college" sortable>
         <template slot-scope="scope">
           <span>{{ collegeFormat(scope.row.college) }}</span>
@@ -112,6 +112,18 @@
         </template>
       </el-table-column>
     </el-table>
+    <!-- 页码 -->
+    <el-row justify="center" type="flex">
+      <el-col :span="10">
+        <el-pagination
+          :current-page.sync="currentPage"
+          :page-size="pageSize"
+          layout="total, prev, pager, next"
+          :total="total"
+          @current-change="getList"
+        />
+      </el-col>
+    </el-row>
 
     <!-- 确认删除的对话框 -->
     <el-dialog title="提示" :visible.sync="delDialogVisible" width="30%">
@@ -144,6 +156,9 @@ import { mapGetters } from 'vuex'
 export default {
   data() {
     return {
+      total: 5,
+      pageSize: 5,
+      currentPage: 1,
       username: '',
       job_number: '',
       phone: '',
@@ -274,11 +289,14 @@ export default {
     getList() {
       this.loading = true
       fetchList({
-        count: 5,
-        start: this.adminList.length
+        count: this.pageSize,
+        start: this.pageSize * (this.currentPage - 1)
       }).then(res => {
+        console.log(res)
         this.loading = false
-        this.adminList = this.adminList.concat(res.data)
+        this.total = res.total
+        this.adminList = []
+        this.adminList = res.data
       })
     },
     // 删除管理员相关

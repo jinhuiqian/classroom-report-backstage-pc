@@ -4,7 +4,7 @@
       <el-col :span="5">
         <div class="a">
           <div>
-            <el-image style="width: 80px; height: 80px" :src="url1" ></el-image>
+            <el-image style="width: 80px; height: 80px" :src="url1" />
           </div>
           <div style="b">
             <h3>正常报告</h3>
@@ -16,7 +16,7 @@
       <el-col :span="5">
         <div class="a">
           <div>
-            <el-image style="width: 80px; height: 80px" :src="url2"></el-image>
+            <el-image style="width: 80px; height: 80px" :src="url2" />
           </div>
           <div style="b">
             <h3>异常报告</h3>
@@ -28,7 +28,7 @@
       <el-col :span="5">
         <div class="a">
           <div>
-            <el-image style="width: 80px; height: 80px" :src="url4"></el-image>
+            <el-image style="width: 80px; height: 80px" :src="url4" />
           </div>
           <div style="b">
             <h3>未处理报告</h3>
@@ -42,44 +42,59 @@
 
 <script>
 import {
-  fetchNListCount,
-  fetchAListCount,
-  fetchUPListCount,
-} from "@/api/report";
+  fetchReportCount
+} from '@/api/report'
+import { mapGetters } from 'vuex'
 
 export default {
   data() {
     return {
       url1:
-        "https://jinhuiqian.oss-cn-beijing.aliyuncs.com/avatar/5a16e6c1a6d5df416b85dd7276300022.png",
+        'https://jinhuiqian.oss-cn-beijing.aliyuncs.com/avatar/5a16e6c1a6d5df416b85dd7276300022.png',
       url2:
-        "https://jinhuiqian.oss-cn-beijing.aliyuncs.com/avatar/5a16e6c1a6d5df416b85dd7276300022.png",
+        'https://jinhuiqian.oss-cn-beijing.aliyuncs.com/avatar/5a16e6c1a6d5df416b85dd7276300022.png',
       url4:
-        "https://jinhuiqian.oss-cn-beijing.aliyuncs.com/avatar/f4734718032481151a4e091b6219580a.png",
+        'https://jinhuiqian.oss-cn-beijing.aliyuncs.com/avatar/f4734718032481151a4e091b6219580a.png',
       nreportList: 0,
       areportList: 0,
-      unratedreport: 0,
-      unprocessedreport: 0,
-    };
+      unprocessedreport: 0
+    }
+  },
+  computed: {
+    ...mapGetters(['admin'])
   },
   created() {
-    this.getList();
+    this.getList()
   },
   methods: {
     getList() {
-      fetchNListCount({}).then((res) => {
-        this.nreportList = res.data;
-      });
-      fetchAListCount({}).then((res) => {
-        this.areportList = res.data;
-      });
-      fetchUPListCount({}).then((res) => {
-        this.unprocessedreport = res.data;
-      });
-    },
+      fetchReportCount({
+        flag: 1,
+        if: 1,
+        status: '已处理',
+        college: this.admin.college
+      }).then((res) => {
+        this.nreportList = res.data
+      })
+      fetchReportCount({
+        flag: 1,
+        if: 2,
+        status: '已处理',
+        college: this.admin.college
+      }).then((res) => {
+        this.areportList = res.data
+      })
+      fetchReportCount({
+        flag: 2,
+        status: '未处理',
+        college: this.admin.college
+      }).then((res) => {
+        this.unprocessedreport = res.data
+      })
+    }
 
-  },
-};
+  }
+}
 </script>
 <style scoped>
 .bg {

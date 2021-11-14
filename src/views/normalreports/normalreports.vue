@@ -169,7 +169,7 @@
 
     <!-- 筛选对话框 -->
     <el-dialog
-      :title="fliterTitle"
+      :title="filterTitle"
       :visible.sync="filterVisible"
       width="70%"
       top="50px"
@@ -219,7 +219,7 @@ import {
   updateStatus,
   updateScore,
   updateFeedback,
-  filter,
+  getList,
   exportRecord
 } from '@/api/report'
 import { Loading } from 'element-ui'
@@ -236,7 +236,7 @@ export default {
       report: {}, // 详细报告 - 报告对象
       reportDetail: {}, // 详细报告 - 详细对象
       detailTitle: '报告详情',
-      fliterTitle: '筛选',
+      filterTitle: '筛选',
       colors: ['#99A9BF', '#F7BA2A', '#FF9900'], // 字体颜色数组
       reportScore: 0, // 报告打分
       currentPage: 1, // 初始页
@@ -356,7 +356,7 @@ export default {
         reportCondition['timeStart'] = timeStart
         reportCondition['timeEnd'] = timeEnd
       }
-      filter(
+      getList(
         reportCondition
       ).then((res) => {
         const data = res.data.data

@@ -224,7 +224,7 @@ import {
   updateStatus,
   updateScore,
   updateFeedback,
-  filter,
+  getList,
   exportRecord
 } from '@/api/report'
 import { Loading } from 'element-ui'
@@ -335,7 +335,7 @@ export default {
         reportCondition['timeStart'] = timeStart
         reportCondition['timeEnd'] = timeEnd
       }
-      filter(
+      getList(
         reportCondition
       ).then((res) => {
         const data = res.data.data

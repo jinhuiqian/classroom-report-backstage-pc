@@ -24,7 +24,7 @@
         <el-col :span="5">
           <div>
             <el-date-picker
-              v-model="value1"
+              v-model="timeValue"
               type="datetime"
               placeholder="选择日期时间"
             />
@@ -67,7 +67,6 @@
           </template>
         </el-table-column>
       </el-table>
-
       <el-row justify="center" type="flex">
         <el-col :span="10">
           <el-pagination
@@ -84,12 +83,12 @@
 </template>
 
 <script>
-import { addNotClean, fetchNCList } from '@/api/report'
+import { addNotClean, getList } from '@/api/report'
 import { mapGetters } from 'vuex'
 export default {
   data() {
     return {
-      value1: '',
+      timeValue: '',
       classroom: '',
       user_class: '',
       reportList: [],
@@ -106,12 +105,17 @@ export default {
     this.getList()
   },
   methods: {
+    // 获取列表
     getList() {
       this.loading = true
-      fetchNCList({
+      getList({
+        timeFlag: 0,
+        if: 3,
+        college: this.admin.college,
         start: 5 * (this.currentPage - 1)
       }).then((res) => {
         const data = res.data
+        this.total = res.data.pager.Total
         const _reportList = []
         for (let i = 0, len = data.length; i < len; i++) {
           _reportList.push(JSON.parse(data[i]))
@@ -125,21 +129,23 @@ export default {
       const Reg = /^((J[1-9]-)+\d{3})$/
       return Reg.test(str)
     },
+    // 班级格式校验
     classVaild(str) {
       const Reg = /^[\u4e00-\u9fa5]{2,}[0-9]{4}$/
       return Reg.test(str)
     },
-
+    // 格式验证方法
     vaildInfo() {
       return (
         this.classroomVaild(this.classroom) && this.classVaild(this.user_class)
       )
     },
+    // 添加记录
     submitAdd() {
       if (this.vaildInfo()) {
         const report = {
           classroom: this.classroom,
-          time: Number(this.value1.getTime()),
+          time: Number(this.timeValue.getTime()),
           user_class: this.user_class,
           college: this.admin.college
         }
@@ -151,7 +157,7 @@ export default {
             })
             this.classroom = ''
             this.user_class = ''
-            this.value1 = null
+            this.timeValue = null
           } else {
             this.$message({
               message: '添加失败',
@@ -167,7 +173,7 @@ export default {
 }
 </script>
 
-<style lang="scss">
+<style lang="scss" scope>
 .loadMore {
   position: relative;
   margin-top: 20px;

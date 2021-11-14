@@ -219,7 +219,7 @@ import {
   updateStatus,
   updateScore,
   updateFeedback,
-  filter,
+  getList,
   exportRecord
 } from '@/api/report'
 import { Loading } from 'element-ui'
@@ -357,7 +357,7 @@ export default {
         reportCondition['timeStart'] = timeStart
         reportCondition['timeEnd'] = timeEnd
       }
-      filter(reportCondition).then((res) => {
+      getList(reportCondition).then((res) => {
         const data = res.data.data
         this.total = res.data.pager.Total
         const _reportList = []
@@ -676,6 +676,7 @@ export default {
   }
 }
 </script>
+
 <style scoped>
 .bg {
   background-color: #d3dce6;

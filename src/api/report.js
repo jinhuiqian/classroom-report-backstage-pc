@@ -1,82 +1,11 @@
 import request from '@/utils/request'
-// const baseURL = 'https://flobby-3gkbs7rb8f7e282e-1305016829.ap-shanghai.service.tcloudbase.com/api'
 
-// const baseURL = 'http://47.117.115.147:3000'
-const baseURL = 'http://localhost:3000'
+const baseURL = 'http://106.14.246.27:3000'
+// const baseURL = 'http://localhost:3000'
 
-export function fetchUPList(params) {
+export function fetchReportCount(params) {
   return request({
-    url: `${baseURL}/report/uplist`,
-    method: 'get',
-    params: {
-      ...params
-    }
-  })
-}
-
-export function fetchNCList(params) {
-  return request({
-    url: `${baseURL}/report/nclist`,
-    method: 'get',
-    params: {
-      ...params
-    }
-  })
-}
-
-export function fetchNCListCount(params) {
-  return request({
-    url: `${baseURL}/report/ncreportcount`,
-    method: 'get',
-    params: {
-      ...params
-    }
-  })
-}
-
-export function fetchUPListCount(params) {
-  return request({
-    url: `${baseURL}/report/unprocessedreport`,
-    method: 'get',
-    params: {
-      ...params
-    }
-  })
-}
-
-export function fetchNListCount(params) {
-  return request({
-    url: `${baseURL}/report/nlistcount`,
-    method: 'get',
-    params: {
-      ...params
-    }
-  })
-}
-
-export function fetchAListCount(params) {
-  return request({
-    url: `${baseURL}/report/alistcount`,
-    method: 'get',
-    params: {
-      ...params
-    }
-  })
-}
-
-export function fetchNList(params) {
-  return request({
-    url: `${baseURL}/report/nlist`,
-    method: 'get',
-    params: {
-      ...params
-    }
-  })
-}
-
-export function fetchAList(params) {
-  return request({
-    url: `${baseURL}/report/alist`,
+    url: `${baseURL}/report/reportCount`,
     method: 'get',
     params: {
       ...params
@@ -124,19 +53,9 @@ export function updateFeedback(params) {
   })
 }
 
-export function filtertime(params) {
+export function getList(params) {
   return request({
-    url: `${baseURL}/report/filtertime`,
-    method: 'post',
-    data: {
-      ...params
-    }
-  })
-}
-
-export function filter(params) {
-  return request({
-    url: `${baseURL}/report/filter`,
+    url: `${baseURL}/report/getList`,
     method: 'post',
     data: {
       ...params
